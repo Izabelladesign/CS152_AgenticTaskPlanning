@@ -4,171 +4,240 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Task Planner</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0D1117;--surface:#161B22;--border:#30363D;--text:#E6EDF3;--muted:#8B949E;--orange:#F0883E;--red:#F85149;--red-d:#1E0A0A;}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;}
-body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);font-size:14px;display:flex;flex-direction:column;}
-header{border-bottom:1px solid var(--border);padding:0 28px;height:56px;display:flex;align-items:center;background:var(--surface);}
-.logo{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;display:flex;align-items:center;gap:10px;}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--orange);box-shadow:0 0 8px var(--orange);}
-.sub{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;}
-.layout{display:grid;grid-template-columns:300px 1fr;flex:1;overflow:hidden;}
-aside{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;}
-.s-section{padding:20px;border-bottom:1px solid var(--border);}
-.s-label{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
-label{display:block;font-size:.75rem;color:var(--muted);margin-bottom:5px;}
-input[type=text],input[type=number],input[type=date]{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 11px;color:var(--text);font-size:.82rem;font-family:'Outfit',sans-serif;}
-input:focus{outline:none;border-color:var(--orange);}
-input[type=range]{width:100%;accent-color:var(--orange);}
-.field{margin-bottom:10px;}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.btn{display:flex;align-items:center;justify-content:center;gap:7px;border:none;border-radius:6px;cursor:pointer;font-family:'Outfit',sans-serif;font-weight:600;font-size:.8rem;padding:9px 16px;width:100%;}
-.btn-orange{background:var(--orange);color:#000;}
-.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);}
-.btn-danger{background:var(--red-d);color:var(--red);border:1px solid rgba(248,81,73,.3);padding:5px 10px;font-size:.74rem;width:auto;}
-.gen-wrap{padding:16px 20px;}
-.main{display:flex;flex-direction:column;overflow:hidden;}
-.tabs{display:flex;border-bottom:1px solid var(--border);padding:0 24px;background:var(--surface);}
-.tab-btn{padding:14px 16px;border:none;background:none;color:var(--muted);cursor:pointer;font-size:.8rem;font-weight:600;font-family:'Outfit',sans-serif;border-bottom:2px solid transparent;margin-bottom:-1px;}
-.tab-btn.active{color:var(--orange);border-bottom-color:var(--orange);}
-.badge{background:rgba(240,136,62,.15);color:var(--orange);font-family:'JetBrains Mono',monospace;font-size:.62rem;padding:1px 6px;border-radius:10px;margin-left:6px;}
-.panel{display:none;overflow-y:auto;padding:24px;flex:1;}
-.panel.active{display:block;}
-.panel-hdr{display:flex;align-items:center;margin-bottom:18px;}
-.panel-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;flex:1;}
-#task-list{display:flex;flex-direction:column;gap:8px;}
-.task-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px;display:flex;align-items:center;gap:14px;}
-.tc-body{flex:1;}
-.tc-name{font-weight:600;font-size:.88rem;}
-.tc-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;font-size:.72rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
-.pips{display:flex;gap:3px;}
-.pip{width:6px;height:6px;border-radius:50%;background:var(--border);}
-.pip.on{background:var(--orange);}
-.empty{text-align:center;padding:56px 24px;color:var(--muted);}
-.empty-icon{font-size:2rem;margin-bottom:10px;opacity:.4;}
-#sched-empty{text-align:center;padding:56px 24px;color:var(--muted);}
-#sched-empty h2{font-family:'Syne',sans-serif;font-size:1.1rem;margin-bottom:8px;color:var(--text);}
-.alert{background:var(--red-d);border:1px solid rgba(248,81,73,.3);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:.8rem;color:var(--red);display:none;}
-#day-list{display:flex;flex-direction:column;gap:10px;}
-.day-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
-.day-head{display:flex;align-items:center;gap:14px;padding:11px 16px;border-bottom:1px solid var(--border);}
-.day-name{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;flex:1;}
-.day-bar-wrap{flex:0 0 120px;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;}
-.day-bar{height:100%;background:var(--orange);border-radius:3px;}
-.day-bar.over{background:var(--red);}
-.day-hrs{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);}
-.day-slots{padding:10px 16px;display:flex;flex-direction:column;gap:7px;}
-.slot{display:flex;align-items:center;gap:10px;}
-.slot-name{flex:1;font-size:.82rem;}
-.slot-bar-wrap{flex:0 0 90px;height:4px;background:var(--bg);border-radius:2px;overflow:hidden;}
-.slot-bar{height:100%;background:var(--orange);opacity:.5;}
-.slot-h{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);}
-#log-pre{font-family:'JetBrains Mono',monospace;font-size:.72rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;white-space:pre-wrap;line-height:1.8;color:var(--muted);display:none;}
-.l-head{color:var(--orange);}
-.l-fired{color:#3FB950;}
-.l-pass{color:#3D444D;}
-#toast{position:fixed;bottom:22px;right:22px;background:#1C2230;border:1px solid var(--border);color:var(--text);padding:10px 16px;border-radius:8px;font-size:.78rem;z-index:999;opacity:0;transform:translateY(6px);transition:opacity .2s,transform .2s;pointer-events:none;font-family:'JetBrains Mono',monospace;}
-#toast.show{opacity:1;transform:translateY(0);}
-#toast.err{border-color:var(--red);color:var(--red);}
-.spin{width:13px;height:13px;border:2px solid rgba(0,0,0,.3);border-top-color:#000;border-radius:50%;animation:rot .5s linear infinite;display:inline-block;}
-@keyframes rot{to{transform:rotate(360deg);}}
+:root {
+  --bg: #F7F6F3;
+  --surface: #FDFCFA;
+  --surface2: #F1EFE8;
+  --border: #E8E6E1;
+  --text: #37352F;
+  --muted: #9B9A97;
+  --purple: #6B4FBB;
+  --purple-lt: #EDE9F8;
+  --amber: #E9A93E;
+  --green: #7CB87A;
+  --green-lt: #EAF3DE;
+  --green-dk: #3B6D11;
+  --red: #E07B7B;
+  --red-lt: #FCEBEB;
+  --red-dk: #A32D2D;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; display: flex; flex-direction: column; }
+
+header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; height: 52px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.logo-title { font-size: 1rem; font-weight: 700; color: var(--text); letter-spacing: -.02em; }
+.logo-sub { font-size: .68rem; color: var(--muted); font-weight: 500; }
+
+.layout { display: grid; grid-template-columns: 268px 1fr; flex: 1; overflow: hidden; }
+
+aside { background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; gap: 12px; padding: 16px 14px; }
+
+.card-section { background: var(--surface2); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.section-label { font-size: .68rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+
+label { display: block; font-size: .72rem; color: var(--muted); margin-bottom: 4px; font-weight: 500; }
+input[type=text], input[type=number], input[type=date] {
+  width: 100%; background: white; border: 1px solid var(--border);
+  border-radius: 8px; padding: 7px 10px; color: var(--text);
+  font-size: .8rem; font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: border-color .15s;
+}
+input:focus { outline: none; border-color: var(--purple); }
+input::placeholder { color: var(--muted); }
+input[type=range] { width: 100%; accent-color: var(--purple); }
+.field { margin-bottom: 0; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+.btn { display: flex; align-items: center; justify-content: center; gap: 6px; border: none; border-radius: 8px; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; font-size: .8rem; padding: 9px 14px; width: 100%; transition: opacity .15s; }
+.btn:hover { opacity: .88; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn-dark { background: var(--text); color: white; }
+.btn-purple { background: var(--purple); color: white; }
+.btn-outline { background: white; color: var(--text); border: 1px solid var(--border); }
+.btn-sm { padding: 5px 10px; font-size: .72rem; width: auto; }
+.btn-red { background: var(--red-lt); color: var(--red-dk); border: 1px solid #F0BEBE; width: auto; padding: 5px 10px; font-size: .72rem; }
+
+.diff-row { display: flex; align-items: center; gap: 8px; }
+.diff-pips { display: flex; gap: 4px; }
+.pip { width: 10px; height: 10px; border-radius: 50%; background: var(--border); transition: background .15s; }
+.pip.on { background: var(--amber); }
+
+.main { display: flex; flex-direction: column; overflow: hidden; }
+.tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--surface); padding: 0 20px; }
+.tab-btn { padding: 13px 14px; border: none; background: none; color: var(--muted); cursor: pointer; font-size: .8rem; font-weight: 600; font-family: 'Plus Jakarta Sans', sans-serif; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .15s, border-color .15s; }
+.tab-btn.active { color: var(--purple); border-bottom-color: var(--purple); }
+.badge { background: var(--purple-lt); color: var(--purple); font-size: .65rem; padding: 1px 7px; border-radius: 20px; margin-left: 5px; font-weight: 600; }
+
+.panel { display: none; overflow-y: auto; padding: 20px 24px; flex: 1; }
+.panel.active { display: block; }
+.panel-hdr { display: flex; align-items: center; margin-bottom: 16px; }
+.panel-title { font-size: 1rem; font-weight: 700; flex: 1; color: var(--text); }
+
+#task-list { display: flex; flex-direction: column; gap: 7px; }
+.task-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; display: flex; align-items: center; gap: 12px; transition: border-color .15s, box-shadow .15s; }
+.task-card:hover { border-color: #CCC9C2; box-shadow: 0 1px 4px rgba(55,53,47,.06); }
+.task-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.tc-body { flex: 1; min-width: 0; }
+.tc-name { font-weight: 600; font-size: .85rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tc-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; font-size: .7rem; color: var(--muted); font-family: 'DM Mono', monospace; align-items: center; }
+.course-pill { background: var(--purple-lt); color: var(--purple); padding: 1px 8px; border-radius: 20px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .68rem; font-weight: 600; }
+
+.empty { text-align: center; padding: 56px 24px; color: var(--muted); }
+.empty-icon { font-size: 2rem; margin-bottom: 10px; opacity: .3; }
+
+#sched-empty { text-align: center; padding: 56px 24px; color: var(--muted); }
+#sched-empty h2 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+
+.alert { background: var(--red-lt); border: 1px solid #F0BEBE; border-radius: 10px; padding: 11px 14px; margin-bottom: 14px; font-size: .78rem; color: var(--red-dk); display: none; }
+#day-list { display: flex; flex-direction: column; gap: 10px; }
+
+.day-card { background: white; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.day-head { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--surface2); }
+.day-name { font-weight: 700; font-size: .88rem; flex: 1; color: var(--text); }
+.day-bar-wrap { flex: 0 0 110px; height: 6px; background: var(--border); border-radius: 10px; overflow: hidden; }
+.day-bar { height: 100%; background: var(--purple); border-radius: 10px; }
+.day-bar.over { background: var(--red); }
+.day-hrs { font-family: 'DM Mono', monospace; font-size: .7rem; color: var(--muted); }
+.day-slots { padding: 10px 14px; display: flex; flex-direction: column; gap: 7px; }
+.slot { display: flex; align-items: center; gap: 10px; }
+.slot-name { flex: 1; font-size: .8rem; color: var(--text); }
+.slot-bar-wrap { flex: 0 0 80px; height: 4px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+.slot-bar { height: 100%; background: var(--purple); border-radius: 10px; opacity: .45; }
+.slot-h { font-family: 'DM Mono', monospace; font-size: .68rem; color: var(--muted); }
+
+#log-pre { font-family: 'DM Mono', monospace; font-size: .72rem; background: #2F2F2F; color: #D4D4D4; border-radius: 10px; padding: 16px; white-space: pre-wrap; line-height: 1.8; display: none; }
+.l-head  { color: #C678DD; }
+.l-fired { color: #98C379; }
+.l-pass  { color: #5C6370; }
+
+#toast { position: fixed; bottom: 20px; right: 20px; background: var(--text); color: white; padding: 9px 16px; border-radius: 8px; font-size: .78rem; z-index: 999; opacity: 0; transform: translateY(6px); transition: opacity .2s, transform .2s; pointer-events: none; font-family: 'DM Mono', monospace; }
+#toast.show { opacity: 1; transform: translateY(0); }
+#toast.err  { background: var(--red-dk); }
+
+.spin { width: 13px; height: 13px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: rot .5s linear infinite; display: inline-block; }
+@keyframes rot { to { transform: rotate(360deg); } }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 </style>
 </head>
 <body>
+
 <header>
-  <div class="logo">
-    <span class="dot"></span>
-    Task Planner
-    <span class="sub">multi-agent scheduler</span>
+  <div>
+    <span class="logo-title">Task Planner</span>
+    <span class="logo-sub" style="margin-left:8px">multi-agent scheduler</span>
   </div>
 </header>
+
 <div class="layout">
   <aside>
-    <div class="s-section" style="flex:1">
-      <div class="s-label">Add Task</div>
+    <div class="card-section" style="flex:1">
+      <div class="section-label">Add Task</div>
       <div class="field">
         <label>Task name</label>
-        <input type="text" id="f-name" placeholder="e.g. Final Project">
+        <input type="text" id="f-name" placeholder="e.g. Final Project Report">
       </div>
       <div class="field">
         <label>Course / Category</label>
         <input type="text" id="f-course" placeholder="Optional">
       </div>
-      <div class="row2" style="margin-bottom:10px">
-        <div class="field" style="margin:0">
+      <div class="row2">
+        <div class="field">
           <label>Due date</label>
           <input type="date" id="f-due">
         </div>
-        <div class="field" style="margin:0">
+        <div class="field">
           <label>Est. hours</label>
           <input type="number" id="f-hours" value="2" min="0.25" step="0.25">
         </div>
       </div>
       <div class="field">
-        <label>Difficulty <span id="diff-val" style="color:var(--orange);font-family:'JetBrains Mono',monospace">3</span>/5</label>
-        <input type="range" id="f-diff" min="1" max="5" value="3" oninput="document.getElementById('diff-val').textContent=this.value">
+        <label>Difficulty <span id="diff-val" style="color:var(--purple);font-family:'DM Mono',monospace">3</span>/5</label>
+        <input type="range" id="f-diff" min="1" max="5" value="3" oninput="document.getElementById('diff-val').textContent=this.value;updatePips(this.value)">
+        <div class="diff-pips" id="diff-pips" style="margin-top:6px">
+          <span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip"></span><span class="pip"></span>
+        </div>
       </div>
-      <button class="btn btn-ghost" onclick="addTask()" style="margin-top:6px">+ Add Task</button>
+      <button class="btn btn-dark" onclick="addTask()">+ Add Task</button>
     </div>
-    <div class="s-section">
-      <div class="s-label">Constraints</div>
+
+    <div class="card-section">
+      <div class="section-label">Constraints</div>
       <div class="row2">
-        <div class="field" style="margin:0">
+        <div class="field">
           <label>Start date</label>
           <input type="date" id="c-start">
         </div>
-        <div class="field" style="margin:0">
+        <div class="field">
           <label>Max hrs / day</label>
           <input type="number" id="c-maxh" value="6" min="0.5" max="24" step="0.5">
         </div>
       </div>
-    </div>
-    <div class="gen-wrap">
-      <button class="btn btn-orange" id="gen-btn" onclick="generate()">&#9889; Generate Schedule</button>
+      <button class="btn btn-purple" id="gen-btn" onclick="generate()">Generate Schedule</button>
     </div>
   </aside>
+
   <div class="main">
     <div class="tabs">
       <button class="tab-btn active" onclick="goTab('tasks',this)">Tasks<span class="badge" id="task-count">0</span></button>
       <button class="tab-btn" onclick="goTab('schedule',this)">Schedule</button>
       <button class="tab-btn" onclick="goTab('log',this)">Rule Log</button>
     </div>
+
     <div class="panel active" id="tasks-panel">
       <div class="panel-hdr">
         <span class="panel-title">Your Tasks</span>
-        <button class="btn btn-danger" onclick="clearAll()">Clear All</button>
+        <button class="btn btn-red" onclick="clearAll()">Clear All</button>
       </div>
       <div id="task-list">
         <div class="empty" id="task-empty">
           <div class="empty-icon">&#128221;</div>
-          <p>No tasks yet. Add one from the sidebar.</p>
+          <p style="font-size:.84rem">No tasks yet. Add one from the sidebar.</p>
         </div>
       </div>
     </div>
+
     <div class="panel" id="schedule-panel">
       <div id="sched-empty">
         <h2>No schedule yet</h2>
-        <p>Add tasks then hit <strong style="color:var(--orange)">&#9889; Generate Schedule</strong></p>
+        <p style="font-size:.84rem;color:var(--muted)">Add tasks then hit <strong style="color:var(--purple)">Generate Schedule</strong></p>
       </div>
       <div id="sched-content" style="display:none">
         <div class="alert" id="alert-box"></div>
         <div id="day-list"></div>
       </div>
     </div>
+
     <div class="panel" id="log-panel">
       <div class="empty" id="log-empty">
         <div class="empty-icon">&#128203;</div>
-        <p>Rule trace appears here after scheduling.</p>
+        <p style="font-size:.84rem">Rule trace appears here after scheduling.</p>
       </div>
       <pre id="log-pre"></pre>
     </div>
   </div>
 </div>
+
 <div id="toast"></div>
+
 <script>
 var tasks = [];
+
+function dotColor(difficulty) {
+  if (difficulty >= 4) return '#E07B7B';
+  if (difficulty >= 3) return '#E9A93E';
+  return '#7CB87A';
+}
+
+function updatePips(val) {
+  var pips = document.getElementById('diff-pips').children;
+  for (var i = 0; i < 5; i++) {
+    pips[i].className = 'pip' + (i < val ? ' on' : '');
+  }
+}
 
 document.addEventListener('DOMContentLoaded', function() {
   var today = new Date().toISOString().split('T')[0];
@@ -195,8 +264,7 @@ function addTask() {
   api('/api/tasks', 'POST', {name: name, due_date: due, estimated_hours: hours, difficulty: diff, course: course})
     .then(function() { return api('/api/tasks'); })
     .then(function(data) {
-      tasks = data;
-      renderTasks();
+      tasks = data; renderTasks();
       document.getElementById('f-name').value = '';
       document.getElementById('f-course').value = '';
       toast('Task added');
@@ -232,20 +300,17 @@ function renderTasks() {
   var html = '';
   for (var i = 0; i < tasks.length; i++) {
     var t = tasks[i];
-    var pips = '';
-    for (var n = 1; n <= 5; n++) {
-      pips += '<span class="pip ' + (n <= t.difficulty ? 'on' : '') + '"></span>';
-    }
+    var dot = dotColor(t.difficulty);
     html += '<div class="task-card">'
+      + '<div class="task-dot" style="background:' + dot + '"></div>'
       + '<div class="tc-body">'
       + '<div class="tc-name">' + esc(t.name) + '</div>'
       + '<div class="tc-meta">'
-      + '<span>&#128197; ' + t.due_date + '</span>'
-      + '<span>&#9201; ' + t.estimated_hours + 'h</span>'
-      + '<span><span class="pips">' + pips + '</span></span>'
-      + (t.course ? '<span>&#128218; ' + esc(t.course) + '</span>' : '')
+      + '<span>' + t.due_date + '</span>'
+      + '<span>' + t.estimated_hours + 'h</span>'
+      + (t.course ? '<span class="course-pill">' + esc(t.course) + '</span>' : '')
       + '</div></div>'
-      + '<button class="btn btn-danger" onclick="deleteTask(\'' + t.id + '\')">&#x2715;</button>'
+      + '<button class="btn btn-red" onclick="deleteTask(\'' + t.id + '\')" style="padding:4px 9px;font-size:.7rem">&#x2715;</button>'
       + '</div>';
   }
   list.innerHTML = html;
@@ -266,7 +331,7 @@ function generate() {
       toast('Schedule ready!');
     })
     .catch(function(e) { toast(e.message, true); })
-    .finally(function() { btn.disabled = false; btn.innerHTML = '&#9889; Generate Schedule'; });
+    .finally(function() { btn.disabled = false; btn.innerHTML = 'Generate Schedule'; });
 }
 
 function renderSchedule(res, maxH) {
@@ -275,11 +340,9 @@ function renderSchedule(res, maxH) {
   var alertBox = document.getElementById('alert-box');
   if (res.unscheduled && res.unscheduled.length) {
     alertBox.style.display = 'block';
-    alertBox.innerHTML = '<strong>&#9888; ' + res.unscheduled.length + ' task(s) could not be scheduled</strong><br>'
+    alertBox.innerHTML = '<strong>' + res.unscheduled.length + ' task(s) could not be scheduled</strong><br>'
       + res.unscheduled.map(function(n) { return '&#8226; ' + esc(n); }).join('  ');
-  } else {
-    alertBox.style.display = 'none';
-  }
+  } else { alertBox.style.display = 'none'; }
   var html = '';
   for (var i = 0; i < res.days.length; i++) {
     var day  = res.days[i];
@@ -292,17 +355,14 @@ function renderSchedule(res, maxH) {
       slots += '<div class="slot">'
         + '<div class="slot-name">' + esc(s.name) + '</div>'
         + '<div class="slot-bar-wrap"><div class="slot-bar" style="width:' + sp + '%"></div></div>'
-        + '<div class="slot-h">' + s.hours + 'h</div>'
-        + '</div>';
+        + '<div class="slot-h">' + s.hours + 'h</div></div>';
     }
     html += '<div class="day-card">'
       + '<div class="day-head">'
       + '<div class="day-name">' + esc(day.label) + '</div>'
       + '<div class="day-bar-wrap"><div class="day-bar ' + (over ? 'over' : '') + '" style="width:' + pct + '%"></div></div>'
-      + '<div class="day-hrs">' + day.total + 'h / ' + maxH + 'h</div>'
-      + '</div>'
-      + '<div class="day-slots">' + slots + '</div>'
-      + '</div>';
+      + '<div class="day-hrs">' + day.total + 'h / ' + maxH + 'h</div></div>'
+      + '<div class="day-slots">' + slots + '</div></div>';
   }
   document.getElementById('day-list').innerHTML = html;
 }
@@ -315,15 +375,10 @@ function renderLog(lines) {
   var html = '';
   for (var i = 0; i < lines.length; i++) {
     var l = esc(lines[i]);
-    if (lines[i].indexOf('──') === 0) {
-      html += '<span class="l-head">' + l + '</span>\n';
-    } else if (lines[i].indexOf('[FIRED]') !== -1) {
-      html += '<span class="l-fired">' + l + '</span>\n';
-    } else if (lines[i].indexOf('[PASS]') !== -1) {
-      html += '<span class="l-pass">' + l + '</span>\n';
-    } else {
-      html += l + '\n';
-    }
+    if (lines[i].indexOf('──') === 0)          html += '<span class="l-head">'  + l + '</span>\n';
+    else if (lines[i].indexOf('[FIRED]') !== -1) html += '<span class="l-fired">' + l + '</span>\n';
+    else if (lines[i].indexOf('[PASS]')  !== -1) html += '<span class="l-pass">'  + l + '</span>\n';
+    else html += l + '\n';
   }
   pre.innerHTML = html;
 }
@@ -331,10 +386,7 @@ function renderLog(lines) {
 function api(url, method, body) {
   method = method || 'GET';
   var opts = {method: method, headers: {}};
-  if (body) {
-    opts.headers['Content-Type'] = 'application/json';
-    opts.body = JSON.stringify(body);
-  }
+  if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
   return fetch(url, opts).then(function(r) {
     return r.json().then(function(j) {
       if (!r.ok) throw new Error(j.error || 'Request failed');
@@ -344,7 +396,7 @@ function api(url, method, body) {
 }
 
 function esc(s) {
-  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 var tt;
