@@ -184,6 +184,35 @@ def delete_task(tid):
     return jsonify({"ok": True})
 
 
+@app.route("/api/tasks/<tid>", methods=["PATCH"])
+@_require_login
+def update_task(tid):
+    body = request.get_json(silent=True)
+    if not isinstance(body, dict):
+        return jsonify({"error": "JSON object body required."}), 400
+    err = _validate(body)
+    if err:
+        return jsonify({"error": err}), 400
+
+    uid, ws = _uid_workspace()
+    target = None
+    for t in ws["tasks"]:
+        if t.get("id") == tid:
+            target = t
+            break
+    if target is None:
+        return jsonify({"error": "Task not found."}), 404
+
+    target["name"] = body["name"].strip()
+    target["due_date"] = body["due_date"]
+    target["estimated_hours"] = float(body.get("estimated_hours", target.get("estimated_hours", 2)))
+    target["difficulty"] = int(body.get("difficulty", target.get("difficulty", 3)))
+    target["course"] = (body.get("course", "") or "").strip()
+    ws["schedule"] = None
+    save_workspace(uid, ws)
+    return jsonify(target)
+
+
 @app.route("/api/tasks", methods=["DELETE"])
 @_require_login
 def clear_tasks():
@@ -217,6 +246,17 @@ def patch_settings():
             settings["max_hours_per_day"] = mh
         except (TypeError, ValueError):
             return jsonify({"error": "max_hours_per_day must be > 0."}), 400
+    if body.get("task_sort_by") is not None:
+        sb = str(body["task_sort_by"]).strip()
+        allowed = {"due_date", "name", "estimated_hours", "difficulty", "course"}
+        if sb not in allowed:
+            return jsonify({"error": "Invalid task_sort_by."}), 400
+        settings["task_sort_by"] = sb
+    if body.get("task_sort_order") is not None:
+        so = str(body["task_sort_order"]).strip()
+        if so not in {"asc", "desc"}:
+            return jsonify({"error": "Invalid task_sort_order."}), 400
+        settings["task_sort_order"] = so
     save_workspace(uid, ws)
     return jsonify(settings)
 

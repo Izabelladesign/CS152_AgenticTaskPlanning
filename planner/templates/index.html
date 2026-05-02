@@ -68,6 +68,9 @@ input[type=range] { width: 100%; accent-color: var(--purple); }
 .btn-outline { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); }
 .btn-sm { padding: 5px 10px; font-size: .72rem; width: auto; }
 .btn-red { background: var(--red-lt); color: var(--red-dk); border: 1px solid #F0BEBE; width: auto; padding: 5px 10px; font-size: .72rem; }
+.btn-edit { background: var(--purple-lt); color: var(--purple); border: 1px solid var(--border); width: auto; padding: 5px 10px; font-size: .72rem; }
+.ctl-row { display: flex; align-items: center; gap: 8px; }
+.ctl-row select { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; font-size: .72rem; }
 
 .diff-row { display: flex; align-items: center; gap: 8px; }
 .diff-pips { display: flex; gap: 4px; }
@@ -137,11 +140,23 @@ input[type=range] { width: 100%; accent-color: var(--purple); }
   background: var(--auth-mask-bg); backdrop-filter: blur(6px);
   display: flex; align-items: center; justify-content: center; padding: 24px;
 }
+#edit-mask {
+  position: fixed; inset: 0; z-index: 1990;
+  background: var(--auth-mask-bg); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+}
 .auth-card {
   width: 100%; max-width: 380px; background: var(--surface);
   border: 1px solid var(--border); border-radius: 12px;
   padding: 20px 18px 18px; box-shadow: 0 8px 32px var(--shadow-strong);
 }
+.edit-card {
+  width: 100%; max-width: 440px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 18px; box-shadow: 0 8px 32px var(--shadow-strong);
+}
+.edit-actions { display: flex; gap: 8px; margin-top: 12px; }
+.edit-actions .btn { width: auto; flex: 1; }
 .auth-head { font-size: 1.05rem; font-weight: 700; text-align: center; margin-bottom: 4px; color: var(--text); }
 .auth-sub { font-size: .74rem; color: var(--muted); text-align: center; margin-bottom: 16px; }
 .auth-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
@@ -212,6 +227,42 @@ input[type=password] {
   </div>
 </div>
 
+<div id="edit-mask" class="hidden">
+  <div class="edit-card">
+    <div class="auth-head" style="text-align:left">Edit Task</div>
+    <div class="field">
+      <label>Task name</label>
+      <input type="text" id="ef-name" placeholder="e.g. Final Project Report">
+    </div>
+    <div class="field">
+      <label>Course / Category</label>
+      <input type="text" id="ef-course" placeholder="Optional">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Due date</label>
+        <input type="date" id="ef-due">
+      </div>
+      <div class="field">
+        <label>Est. hours</label>
+        <input type="number" id="ef-hours" value="2" min="0.25" step="0.25">
+      </div>
+    </div>
+    <div class="field">
+      <label>Difficulty <span id="ef-diff-val" style="color:var(--purple);font-family:'DM Mono',monospace">3</span>/5</label>
+      <input type="range" id="ef-diff" min="1" max="5" value="3" oninput="document.getElementById('ef-diff-val').textContent=this.value;updateEditPips(this.value)">
+      <div class="diff-pips" id="ef-diff-pips" style="margin-top:6px">
+        <span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip"></span><span class="pip"></span>
+      </div>
+    </div>
+    <div id="edit-err" class="alert" style="margin-bottom:0;display:none;"></div>
+    <div class="edit-actions">
+      <button type="button" class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+      <button type="button" class="btn btn-purple" id="edit-save-btn" onclick="saveEditedTask()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
 <div class="layout">
   <aside>
     <div class="card-section" style="flex:1">
@@ -270,6 +321,19 @@ input[type=password] {
     <div class="panel active" id="tasks-panel">
       <div class="panel-hdr">
         <span class="panel-title">Your Tasks</span>
+        <div class="ctl-row">
+          <select id="sort-by" onchange="onSortChanged()">
+            <option value="due_date">Due date</option>
+            <option value="name">Name</option>
+            <option value="estimated_hours">Hours</option>
+            <option value="difficulty">Difficulty</option>
+            <option value="course">Course</option>
+          </select>
+          <select id="sort-order" onchange="onSortChanged()">
+            <option value="asc">Asc</option>
+            <option value="desc">Desc</option>
+          </select>
+        </div>
         <button class="btn btn-red" onclick="clearAll()">Clear All</button>
       </div>
       <div id="task-list">
@@ -306,6 +370,9 @@ input[type=password] {
 <script>
 var tasks = [];
 var loggedIn = false;
+var taskSortBy = 'due_date';
+var taskSortOrder = 'asc';
+var editingTaskId = null;
 
 function hideAuthGate() {
   document.getElementById('auth-mask').style.display = 'none';
@@ -362,10 +429,112 @@ function resetLogPanel() {
   pre.innerHTML = '';
 }
 
+function updateEditPips(val) {
+  var pips = document.getElementById('ef-diff-pips').children;
+  for (var i = 0; i < 5; i++) {
+    pips[i].className = 'pip' + (i < val ? ' on' : '');
+  }
+}
+
+function hideEditErr() {
+  var e = document.getElementById('edit-err');
+  e.style.display = 'none';
+  e.textContent = '';
+}
+
+function showEditErr(msg) {
+  var e = document.getElementById('edit-err');
+  e.style.display = 'block';
+  e.textContent = msg || '';
+}
+
+function openEditModal(task) {
+  editingTaskId = task.id;
+  hideEditErr();
+  document.getElementById('ef-name').value = task.name || '';
+  document.getElementById('ef-course').value = task.course || '';
+  document.getElementById('ef-due').value = task.due_date || '';
+  document.getElementById('ef-hours').value = String(task.estimated_hours || 2);
+  var diff = parseInt(task.difficulty, 10);
+  if (isNaN(diff) || diff < 1 || diff > 5) diff = 3;
+  document.getElementById('ef-diff').value = String(diff);
+  document.getElementById('ef-diff-val').textContent = String(diff);
+  updateEditPips(diff);
+  document.getElementById('edit-mask').classList.remove('hidden');
+  document.getElementById('ef-name').focus();
+}
+
+function closeEditModal() {
+  editingTaskId = null;
+  document.getElementById('edit-mask').classList.add('hidden');
+  hideEditErr();
+}
+
+function saveEditedTask() {
+  if (!editingTaskId) return;
+  hideEditErr();
+  var name = document.getElementById('ef-name').value.trim();
+  var due = document.getElementById('ef-due').value;
+  var hours = parseFloat(document.getElementById('ef-hours').value);
+  var diff = parseInt(document.getElementById('ef-diff').value, 10);
+  var course = document.getElementById('ef-course').value.trim();
+
+  if (!name) { showEditErr('Task name required.'); return; }
+  if (!due) { showEditErr('Due date required.'); return; }
+  if (isNaN(hours) || hours <= 0) { showEditErr('Hours must be > 0.'); return; }
+  if (isNaN(diff) || diff < 1 || diff > 5) { showEditErr('Difficulty must be 1..5.'); return; }
+
+  var btn = document.getElementById('edit-save-btn');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  api('/api/tasks/' + editingTaskId, 'PATCH', {
+    name: name,
+    due_date: due,
+    estimated_hours: hours,
+    difficulty: diff,
+    course: course
+  })
+    .then(function() { return api('/api/tasks'); })
+    .then(function(data) {
+      tasks = data;
+      renderTasks();
+      resetSchedulePanel();
+      resetLogPanel();
+      closeEditModal();
+      toast('Task updated');
+    })
+    .catch(function(e) { showEditErr(e.message); })
+    .finally(function() {
+      btn.disabled = false;
+      btn.textContent = 'Save Changes';
+    });
+}
+
+function wireEditEnterSubmit() {
+  var ids = ['ef-name', 'ef-course', 'ef-due', 'ef-hours', 'ef-diff'];
+  for (var i = 0; i < ids.length; i++) {
+    var el = document.getElementById(ids[i]);
+    if (!el) continue;
+    el.addEventListener('keydown', function(ev) {
+      if (ev.key === 'Enter') {
+        ev.preventDefault();
+        saveEditedTask();
+      }
+    });
+  }
+}
+
 function applyWorkspace(ws) {
   tasks = ws.tasks || [];
-  renderTasks();
   var st = ws.settings || {};
+  if (st.task_sort_by) taskSortBy = st.task_sort_by;
+  if (st.task_sort_order) taskSortOrder = st.task_sort_order;
+  var bySel = document.getElementById('sort-by');
+  var ordSel = document.getElementById('sort-order');
+  if (bySel) bySel.value = taskSortBy;
+  if (ordSel) ordSel.value = taskSortOrder;
+  renderTasks();
   if (st.start_date) document.getElementById('c-start').value = st.start_date;
   if (st.max_hours_per_day != null && !isNaN(parseFloat(st.max_hours_per_day))) {
     document.getElementById('c-maxh').value = String(st.max_hours_per_day);
@@ -389,6 +558,20 @@ function saveConstraintDraft() {
   var maxh = parseFloat(document.getElementById('c-maxh').value);
   if (!start || isNaN(maxh)) return;
   api('/api/settings', 'PATCH', {start_date: start, max_hours_per_day: maxh}).catch(function() {});
+}
+
+function saveTaskSortDraft() {
+  if (!loggedIn) return;
+  api('/api/settings', 'PATCH', {task_sort_by: taskSortBy, task_sort_order: taskSortOrder}).catch(function() {});
+}
+
+function onSortChanged() {
+  var by = document.getElementById('sort-by');
+  var ord = document.getElementById('sort-order');
+  taskSortBy = by ? by.value : 'due_date';
+  taskSortOrder = ord ? ord.value : 'asc';
+  renderTasks();
+  saveTaskSortDraft();
 }
 
 function wireConstraintAutosave() {
@@ -491,6 +674,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('c-start').value = today;
   wireConstraintAutosave();
   wireAuthEnterSubmit();
+  wireEditEnterSubmit();
   api('/api/session')
     .then(function(s) {
       if (s.logged_in) {
@@ -554,6 +738,15 @@ function clearAll() {
     .catch(function(e) { toast(e.message, true); });
 }
 
+function editTask(id) {
+  var t = null;
+  for (var i = 0; i < tasks.length; i++) {
+    if (tasks[i].id === id) { t = tasks[i]; break; }
+  }
+  if (!t) { toast('Task not found.', true); return; }
+  openEditModal(t);
+}
+
 function emptyTaskPlaceholder() {
   var el = document.createElement('div');
   el.className = 'empty';
@@ -574,9 +767,28 @@ function renderTasks() {
     ph.style.display = 'block';
     return;
   }
+  var ordered = tasks.slice().sort(function(a, b) {
+    var key = taskSortBy;
+    var av = a[key];
+    var bv = b[key];
+    var cmp = 0;
+    if (key === 'due_date') {
+      var ad = Date.parse(av || '');
+      var bd = Date.parse(bv || '');
+      ad = isNaN(ad) ? 0 : ad;
+      bd = isNaN(bd) ? 0 : bd;
+      cmp = ad - bd;
+    } else if (key === 'estimated_hours' || key === 'difficulty') {
+      cmp = Number(av || 0) - Number(bv || 0);
+    } else {
+      cmp = String(av || '').toLowerCase().localeCompare(String(bv || '').toLowerCase());
+    }
+    return taskSortOrder === 'desc' ? -cmp : cmp;
+  });
+
   var html = '';
-  for (var i = 0; i < tasks.length; i++) {
-    var t = tasks[i];
+  for (var i = 0; i < ordered.length; i++) {
+    var t = ordered[i];
     var dot = dotColor(t.difficulty);
     html += '<div class="task-card">'
       + '<div class="task-dot" style="background:' + dot + '"></div>'
@@ -587,6 +799,7 @@ function renderTasks() {
       + '<span>' + t.estimated_hours + 'h</span>'
       + (t.course ? '<span class="course-pill">' + esc(t.course) + '</span>' : '')
       + '</div></div>'
+      + '<button class="btn btn-edit" onclick="editTask(\'' + t.id + '\')" style="padding:4px 9px;font-size:.7rem">Edit</button>'
       + '<button class="btn btn-red" onclick="deleteTask(\'' + t.id + '\')" style="padding:4px 9px;font-size:.7rem">&#x2715;</button>'
       + '</div>';
   }
