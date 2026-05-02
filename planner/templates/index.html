@@ -287,16 +287,26 @@ function clearAll() {
     .catch(function(e) { toast(e.message, true); });
 }
 
+function emptyTaskPlaceholder() {
+  var el = document.createElement('div');
+  el.className = 'empty';
+  el.id = 'task-empty';
+  el.innerHTML = '<div class="empty-icon">&#128221;</div>'
+    + '<p style="font-size:.84rem">No tasks yet. Add one from the sidebar.</p>';
+  return el;
+}
+
 function renderTasks() {
   var list  = document.getElementById('task-list');
-  var empty = document.getElementById('task-empty');
   document.getElementById('task-count').textContent = tasks.length;
   if (!tasks.length) {
+    var ph = document.getElementById('task-empty');
     list.innerHTML = '';
-    if (empty) { list.appendChild(empty); empty.style.display = 'block'; }
+    if (!ph) ph = emptyTaskPlaceholder();
+    list.appendChild(ph);
+    ph.style.display = 'block';
     return;
   }
-  if (empty) empty.style.display = 'none';
   var html = '';
   for (var i = 0; i < tasks.length; i++) {
     var t = tasks[i];

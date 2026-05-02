@@ -15,7 +15,12 @@ class Task:
         return (self.deadline - from_date).days
 
     def is_feasible(self, from_date: date, max_hours: float) -> bool:
-        return max(0, self.days_until(from_date)) * max_hours >= self.duration
+        # Scheduler uses inclusive calendar days [from_date..deadline]; match that here.
+        delta = (self.deadline - from_date).days
+        if delta < 0:
+            return False
+        inclusive_days = delta + 1
+        return inclusive_days * max_hours >= self.duration
 
     def adjust_priority(self, delta: float) -> "Task":
         return replace(self, priority=self.priority + delta)
