@@ -22,12 +22,21 @@
   --red: #E07B7B;
   --red-lt: #FCEBEB;
   --red-dk: #A32D2D;
+  --input-bg: #FFFFFF;
+  --card-bg: #FFFFFF;
+  --hover-border: #CCC9C2;
+  --shadow-soft: rgba(55,53,47,.06);
+  --shadow-strong: rgba(55,53,47,.08);
+  --log-bg: #2F2F2F;
+  --log-text: #D4D4D4;
+  --auth-mask-bg: rgba(247,246,243,.93);
 }
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
 body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; display: flex; flex-direction: column; }
 
-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; height: 52px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-shrink: 0; }
 .logo-title { font-size: 1rem; font-weight: 700; color: var(--text); letter-spacing: -.02em; }
 .logo-sub { font-size: .68rem; color: var(--muted); font-weight: 500; }
 
@@ -40,7 +49,7 @@ aside { background: var(--surface); border-right: 1px solid var(--border); displ
 
 label { display: block; font-size: .72rem; color: var(--muted); margin-bottom: 4px; font-weight: 500; }
 input[type=text], input[type=number], input[type=date] {
-  width: 100%; background: white; border: 1px solid var(--border);
+  width: 100%; background: var(--input-bg); border: 1px solid var(--border);
   border-radius: 8px; padding: 7px 10px; color: var(--text);
   font-size: .8rem; font-family: 'Plus Jakarta Sans', sans-serif;
   transition: border-color .15s;
@@ -56,9 +65,12 @@ input[type=range] { width: 100%; accent-color: var(--purple); }
 .btn:disabled { opacity: .45; cursor: not-allowed; }
 .btn-dark { background: var(--text); color: white; }
 .btn-purple { background: var(--purple); color: white; }
-.btn-outline { background: white; color: var(--text); border: 1px solid var(--border); }
+.btn-outline { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); }
 .btn-sm { padding: 5px 10px; font-size: .72rem; width: auto; }
 .btn-red { background: var(--red-lt); color: var(--red-dk); border: 1px solid #F0BEBE; width: auto; padding: 5px 10px; font-size: .72rem; }
+.btn-edit { background: var(--purple-lt); color: var(--purple); border: 1px solid var(--border); width: auto; padding: 5px 10px; font-size: .72rem; }
+.ctl-row { display: flex; align-items: center; gap: 8px; }
+.ctl-row select { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; font-size: .72rem; }
 
 .diff-row { display: flex; align-items: center; gap: 8px; }
 .diff-pips { display: flex; gap: 4px; }
@@ -77,8 +89,8 @@ input[type=range] { width: 100%; accent-color: var(--purple); }
 .panel-title { font-size: 1rem; font-weight: 700; flex: 1; color: var(--text); }
 
 #task-list { display: flex; flex-direction: column; gap: 7px; }
-.task-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; display: flex; align-items: center; gap: 12px; transition: border-color .15s, box-shadow .15s; }
-.task-card:hover { border-color: #CCC9C2; box-shadow: 0 1px 4px rgba(55,53,47,.06); }
+.task-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; display: flex; align-items: center; gap: 12px; transition: border-color .15s, box-shadow .15s; }
+.task-card:hover { border-color: var(--hover-border); box-shadow: 0 1px 4px var(--shadow-soft); }
 .task-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
 .tc-body { flex: 1; min-width: 0; }
 .tc-name { font-weight: 600; font-size: .85rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -94,7 +106,7 @@ input[type=range] { width: 100%; accent-color: var(--purple); }
 .alert { background: var(--red-lt); border: 1px solid #F0BEBE; border-radius: 10px; padding: 11px 14px; margin-bottom: 14px; font-size: .78rem; color: var(--red-dk); display: none; }
 #day-list { display: flex; flex-direction: column; gap: 10px; }
 
-.day-card { background: white; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.day-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
 .day-head { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--surface2); }
 .day-name { font-weight: 700; font-size: .88rem; flex: 1; color: var(--text); }
 .day-bar-wrap { flex: 0 0 110px; height: 6px; background: var(--border); border-radius: 10px; overflow: hidden; }
@@ -108,7 +120,7 @@ input[type=range] { width: 100%; accent-color: var(--purple); }
 .slot-bar { height: 100%; background: var(--purple); border-radius: 10px; opacity: .45; }
 .slot-h { font-family: 'DM Mono', monospace; font-size: .68rem; color: var(--muted); }
 
-#log-pre { font-family: 'DM Mono', monospace; font-size: .72rem; background: #2F2F2F; color: #D4D4D4; border-radius: 10px; padding: 16px; white-space: pre-wrap; line-height: 1.8; display: none; }
+#log-pre { font-family: 'DM Mono', monospace; font-size: .72rem; background: var(--log-bg); color: var(--log-text); border-radius: 10px; padding: 16px; white-space: pre-wrap; line-height: 1.8; display: none; }
 .l-head  { color: #C678DD; }
 .l-fired { color: #98C379; }
 .l-pass  { color: #5C6370; }
@@ -121,6 +133,47 @@ input[type=range] { width: 100%; accent-color: var(--purple); }
 @keyframes rot { to { transform: rotate(360deg); } }
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.hidden { display: none !important; }
+#auth-mask {
+  position: fixed; inset: 0; z-index: 2000;
+  background: var(--auth-mask-bg); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+#edit-mask {
+  position: fixed; inset: 0; z-index: 1990;
+  background: var(--auth-mask-bg); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.auth-card {
+  width: 100%; max-width: 380px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 20px 18px 18px; box-shadow: 0 8px 32px var(--shadow-strong);
+}
+.edit-card {
+  width: 100%; max-width: 440px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 18px; box-shadow: 0 8px 32px var(--shadow-strong);
+}
+.edit-actions { display: flex; gap: 8px; margin-top: 12px; }
+.edit-actions .btn { width: auto; flex: 1; }
+.auth-head { font-size: 1.05rem; font-weight: 700; text-align: center; margin-bottom: 4px; color: var(--text); }
+.auth-sub { font-size: .74rem; color: var(--muted); text-align: center; margin-bottom: 16px; }
+.auth-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+.auth-tab {
+  flex: 1; border: none; border-radius: 8px; padding: 9px 10px; cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; font-size: .8rem;
+  background: var(--surface2); color: var(--muted);
+}
+.auth-tab.active { background: var(--purple-lt); color: var(--purple); }
+#user-row { display: flex; align-items: center; gap: 10px; flex-shrink: 0; font-size: .76rem; }
+#user-label { color: var(--text); font-weight: 600; font-size: .82rem; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+input[type=password] {
+  width: 100%; background: var(--input-bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 7px 10px; color: var(--text); font-size: .8rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
 </style>
 </head>
 <body>
@@ -130,7 +183,85 @@ input[type=range] { width: 100%; accent-color: var(--purple); }
     <span class="logo-title">Task Planner</span>
     <span class="logo-sub" style="margin-left:8px">multi-agent scheduler</span>
   </div>
+  <div id="user-row" class="hidden">
+    <span id="user-label"></span>
+    <button type="button" class="btn btn-outline btn-sm" onclick="logout()">Log out</button>
+  </div>
 </header>
+
+<div id="auth-mask" style="display:flex">
+  <div class="auth-card">
+    <div class="auth-head">Planning made easy</div>
+    <div class="auth-sub">Tasks and schedules are stored locally for your account.</div>
+    <div class="auth-tabs">
+      <button type="button" class="auth-tab active" id="tab-in" onclick="switchAuthTab('in')">Log in</button>
+      <button type="button" class="auth-tab" id="tab-reg" onclick="switchAuthTab('reg')">Register</button>
+    </div>
+    <div id="auth-login">
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="login-user" autocomplete="username">
+      </div>
+      <div class="field" style="margin-top:10px">
+        <label>Password</label>
+        <input type="password" id="login-pass" autocomplete="current-password">
+      </div>
+      <button type="button" class="btn btn-dark" style="margin-top:14px" onclick="doLogin()">Log in</button>
+    </div>
+    <div id="auth-register" class="hidden">
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="reg-user" autocomplete="username">
+      </div>
+      <div class="field" style="margin-top:10px">
+        <label>Password (min 6)</label>
+        <input type="password" id="reg-pass1" autocomplete="new-password">
+      </div>
+      <div class="field" style="margin-top:10px">
+        <label>Confirm password</label>
+        <input type="password" id="reg-pass2" autocomplete="new-password">
+      </div>
+      <button type="button" class="btn btn-purple" style="margin-top:14px" onclick="doRegister()">Create account</button>
+    </div>
+    <div id="auth-err" class="alert" style="margin-top:12px;margin-bottom:0;display:none;padding:9px 12px;"></div>
+  </div>
+</div>
+
+<div id="edit-mask" class="hidden">
+  <div class="edit-card">
+    <div class="auth-head" style="text-align:left">Edit Task</div>
+    <div class="field">
+      <label>Task name</label>
+      <input type="text" id="ef-name" placeholder="e.g. Final Project Report">
+    </div>
+    <div class="field">
+      <label>Course / Category</label>
+      <input type="text" id="ef-course" placeholder="Optional">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Due date</label>
+        <input type="date" id="ef-due">
+      </div>
+      <div class="field">
+        <label>Est. hours</label>
+        <input type="number" id="ef-hours" value="2" min="0.25" step="0.25">
+      </div>
+    </div>
+    <div class="field">
+      <label>Difficulty <span id="ef-diff-val" style="color:var(--purple);font-family:'DM Mono',monospace">3</span>/5</label>
+      <input type="range" id="ef-diff" min="1" max="5" value="3" oninput="document.getElementById('ef-diff-val').textContent=this.value;updateEditPips(this.value)">
+      <div class="diff-pips" id="ef-diff-pips" style="margin-top:6px">
+        <span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip"></span><span class="pip"></span>
+      </div>
+    </div>
+    <div id="edit-err" class="alert" style="margin-bottom:0;display:none;"></div>
+    <div class="edit-actions">
+      <button type="button" class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+      <button type="button" class="btn btn-purple" id="edit-save-btn" onclick="saveEditedTask()">Save Changes</button>
+    </div>
+  </div>
+</div>
 
 <div class="layout">
   <aside>
@@ -190,6 +321,19 @@ input[type=range] { width: 100%; accent-color: var(--purple); }
     <div class="panel active" id="tasks-panel">
       <div class="panel-hdr">
         <span class="panel-title">Your Tasks</span>
+        <div class="ctl-row">
+          <select id="sort-by" onchange="onSortChanged()">
+            <option value="due_date">Due date</option>
+            <option value="name">Name</option>
+            <option value="estimated_hours">Hours</option>
+            <option value="difficulty">Difficulty</option>
+            <option value="course">Course</option>
+          </select>
+          <select id="sort-order" onchange="onSortChanged()">
+            <option value="asc">Asc</option>
+            <option value="desc">Desc</option>
+          </select>
+        </div>
         <button class="btn btn-red" onclick="clearAll()">Clear All</button>
       </div>
       <div id="task-list">
@@ -225,6 +369,291 @@ input[type=range] { width: 100%; accent-color: var(--purple); }
 
 <script>
 var tasks = [];
+var loggedIn = false;
+var taskSortBy = 'due_date';
+var taskSortOrder = 'asc';
+var editingTaskId = null;
+
+function hideAuthGate() {
+  document.getElementById('auth-mask').style.display = 'none';
+}
+function showAuthGate() {
+  document.getElementById('auth-mask').style.display = 'flex';
+  hideAuthErr();
+}
+function hideAuthErr() {
+  var e = document.getElementById('auth-err');
+  e.style.display = 'none';
+  e.textContent = '';
+}
+function showAuthErr(msg) {
+  var e = document.getElementById('auth-err');
+  e.style.display = 'block';
+  e.textContent = msg || '';
+}
+function switchAuthTab(which) {
+  hideAuthErr();
+  var tin = document.getElementById('tab-in');
+  var trg = document.getElementById('tab-reg');
+  var ln = document.getElementById('auth-login');
+  var rg = document.getElementById('auth-register');
+  if (which === 'reg') {
+    tin.classList.remove('active');
+    trg.classList.add('active');
+    ln.classList.add('hidden');
+    rg.classList.remove('hidden');
+  } else {
+    trg.classList.remove('active');
+    tin.classList.add('active');
+    rg.classList.add('hidden');
+    ln.classList.remove('hidden');
+  }
+}
+
+function setLoggedInUi(displayName) {
+  loggedIn = true;
+  document.getElementById('user-row').classList.remove('hidden');
+  document.getElementById('user-label').textContent = displayName || 'User';
+  hideAuthGate();
+}
+
+function resetSchedulePanel() {
+  document.getElementById('sched-empty').style.display = 'block';
+  document.getElementById('sched-content').style.display = 'none';
+  document.getElementById('day-list').innerHTML = '';
+}
+function resetLogPanel() {
+  document.getElementById('log-empty').style.display = 'block';
+  var pre = document.getElementById('log-pre');
+  pre.style.display = 'none';
+  pre.innerHTML = '';
+}
+
+function updateEditPips(val) {
+  var pips = document.getElementById('ef-diff-pips').children;
+  for (var i = 0; i < 5; i++) {
+    pips[i].className = 'pip' + (i < val ? ' on' : '');
+  }
+}
+
+function hideEditErr() {
+  var e = document.getElementById('edit-err');
+  e.style.display = 'none';
+  e.textContent = '';
+}
+
+function showEditErr(msg) {
+  var e = document.getElementById('edit-err');
+  e.style.display = 'block';
+  e.textContent = msg || '';
+}
+
+function openEditModal(task) {
+  editingTaskId = task.id;
+  hideEditErr();
+  document.getElementById('ef-name').value = task.name || '';
+  document.getElementById('ef-course').value = task.course || '';
+  document.getElementById('ef-due').value = task.due_date || '';
+  document.getElementById('ef-hours').value = String(task.estimated_hours || 2);
+  var diff = parseInt(task.difficulty, 10);
+  if (isNaN(diff) || diff < 1 || diff > 5) diff = 3;
+  document.getElementById('ef-diff').value = String(diff);
+  document.getElementById('ef-diff-val').textContent = String(diff);
+  updateEditPips(diff);
+  document.getElementById('edit-mask').classList.remove('hidden');
+  document.getElementById('ef-name').focus();
+}
+
+function closeEditModal() {
+  editingTaskId = null;
+  document.getElementById('edit-mask').classList.add('hidden');
+  hideEditErr();
+}
+
+function saveEditedTask() {
+  if (!editingTaskId) return;
+  hideEditErr();
+  var name = document.getElementById('ef-name').value.trim();
+  var due = document.getElementById('ef-due').value;
+  var hours = parseFloat(document.getElementById('ef-hours').value);
+  var diff = parseInt(document.getElementById('ef-diff').value, 10);
+  var course = document.getElementById('ef-course').value.trim();
+
+  if (!name) { showEditErr('Task name required.'); return; }
+  if (!due) { showEditErr('Due date required.'); return; }
+  if (isNaN(hours) || hours <= 0) { showEditErr('Hours must be > 0.'); return; }
+  if (isNaN(diff) || diff < 1 || diff > 5) { showEditErr('Difficulty must be 1..5.'); return; }
+
+  var btn = document.getElementById('edit-save-btn');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  api('/api/tasks/' + editingTaskId, 'PATCH', {
+    name: name,
+    due_date: due,
+    estimated_hours: hours,
+    difficulty: diff,
+    course: course
+  })
+    .then(function() { return api('/api/tasks'); })
+    .then(function(data) {
+      tasks = data;
+      renderTasks();
+      resetSchedulePanel();
+      resetLogPanel();
+      closeEditModal();
+      toast('Task updated');
+    })
+    .catch(function(e) { showEditErr(e.message); })
+    .finally(function() {
+      btn.disabled = false;
+      btn.textContent = 'Save Changes';
+    });
+}
+
+function wireEditEnterSubmit() {
+  var ids = ['ef-name', 'ef-course', 'ef-due', 'ef-hours', 'ef-diff'];
+  for (var i = 0; i < ids.length; i++) {
+    var el = document.getElementById(ids[i]);
+    if (!el) continue;
+    el.addEventListener('keydown', function(ev) {
+      if (ev.key === 'Enter') {
+        ev.preventDefault();
+        saveEditedTask();
+      }
+    });
+  }
+}
+
+function applyWorkspace(ws) {
+  tasks = ws.tasks || [];
+  var st = ws.settings || {};
+  if (st.task_sort_by) taskSortBy = st.task_sort_by;
+  if (st.task_sort_order) taskSortOrder = st.task_sort_order;
+  var bySel = document.getElementById('sort-by');
+  var ordSel = document.getElementById('sort-order');
+  if (bySel) bySel.value = taskSortBy;
+  if (ordSel) ordSel.value = taskSortOrder;
+  renderTasks();
+  if (st.start_date) document.getElementById('c-start').value = st.start_date;
+  if (st.max_hours_per_day != null && !isNaN(parseFloat(st.max_hours_per_day))) {
+    document.getElementById('c-maxh').value = String(st.max_hours_per_day);
+  }
+  var mh = parseFloat(document.getElementById('c-maxh').value);
+  if (isNaN(mh)) mh = 6;
+  if (ws.schedule && ws.schedule.days && ws.schedule.days.length) {
+    renderSchedule(ws.schedule, mh);
+    if (ws.schedule.log && ws.schedule.log.length) renderLog(ws.schedule.log);
+    document.getElementById('sched-empty').style.display = 'none';
+    document.getElementById('sched-content').style.display = 'block';
+  } else {
+    resetSchedulePanel();
+    resetLogPanel();
+  }
+}
+
+function saveConstraintDraft() {
+  if (!loggedIn) return;
+  var start = document.getElementById('c-start').value;
+  var maxh = parseFloat(document.getElementById('c-maxh').value);
+  if (!start || isNaN(maxh)) return;
+  api('/api/settings', 'PATCH', {start_date: start, max_hours_per_day: maxh}).catch(function() {});
+}
+
+function saveTaskSortDraft() {
+  if (!loggedIn) return;
+  api('/api/settings', 'PATCH', {task_sort_by: taskSortBy, task_sort_order: taskSortOrder}).catch(function() {});
+}
+
+function onSortChanged() {
+  var by = document.getElementById('sort-by');
+  var ord = document.getElementById('sort-order');
+  taskSortBy = by ? by.value : 'due_date';
+  taskSortOrder = ord ? ord.value : 'asc';
+  renderTasks();
+  saveTaskSortDraft();
+}
+
+function wireConstraintAutosave() {
+  document.getElementById('c-start').addEventListener('change', saveConstraintDraft);
+  document.getElementById('c-maxh').addEventListener('change', saveConstraintDraft);
+}
+
+function wireAuthEnterSubmit() {
+  var loginIds = ['login-user', 'login-pass'];
+  var registerIds = ['reg-user', 'reg-pass1', 'reg-pass2'];
+
+  for (var i = 0; i < loginIds.length; i++) {
+    var li = document.getElementById(loginIds[i]);
+    if (!li) continue;
+    li.addEventListener('keydown', function(ev) {
+      if (ev.key === 'Enter') {
+        ev.preventDefault();
+        doLogin();
+      }
+    });
+  }
+
+  for (var j = 0; j < registerIds.length; j++) {
+    var ri = document.getElementById(registerIds[j]);
+    if (!ri) continue;
+    ri.addEventListener('keydown', function(ev) {
+      if (ev.key === 'Enter') {
+        ev.preventDefault();
+        doRegister();
+      }
+    });
+  }
+}
+
+function doLogin() {
+  hideAuthErr();
+  var u = document.getElementById('login-user').value.trim();
+  var p = document.getElementById('login-pass').value;
+  if (!u || !p) { showAuthErr('Enter username and password.'); return; }
+  api('/api/auth/login', 'POST', {username: u, password: p})
+    .then(function(res) {
+      document.getElementById('login-pass').value = '';
+      setLoggedInUi(res.username || u);
+      return api('/api/workspace').then(applyWorkspace);
+    })
+    .catch(function(e) { showAuthErr(e.message); });
+}
+
+function doRegister() {
+  hideAuthErr();
+  var u = document.getElementById('reg-user').value.trim();
+  var p1 = document.getElementById('reg-pass1').value;
+  var p2 = document.getElementById('reg-pass2').value;
+  if (!u || !p1) { showAuthErr('Enter username and password.'); return; }
+  if (p1 !== p2) { showAuthErr('Passwords do not match.'); return; }
+  api('/api/auth/register', 'POST', {username: u, password: p1})
+    .then(function(res) {
+      document.getElementById('reg-pass1').value = '';
+      document.getElementById('reg-pass2').value = '';
+      setLoggedInUi(res.username || u);
+      return api('/api/workspace').then(applyWorkspace);
+    })
+    .catch(function(e) { showAuthErr(e.message); });
+}
+
+function logout() {
+  api('/api/auth/logout', 'POST')
+    .then(function() {
+      loggedIn = false;
+      tasks = [];
+      renderTasks();
+      resetSchedulePanel();
+      resetLogPanel();
+      document.getElementById('user-row').classList.add('hidden');
+      showAuthGate();
+    })
+    .catch(function() {
+      loggedIn = false;
+      document.getElementById('user-row').classList.add('hidden');
+      showAuthGate();
+    });
+}
 
 function dotColor(difficulty) {
   if (difficulty >= 4) return '#E07B7B';
@@ -243,7 +672,18 @@ document.addEventListener('DOMContentLoaded', function() {
   var today = new Date().toISOString().split('T')[0];
   document.getElementById('f-due').value = today;
   document.getElementById('c-start').value = today;
-  api('/api/tasks').then(function(data) { tasks = data; renderTasks(); });
+  wireConstraintAutosave();
+  wireAuthEnterSubmit();
+  wireEditEnterSubmit();
+  api('/api/session')
+    .then(function(s) {
+      if (s.logged_in) {
+        setLoggedInUi(s.username);
+        return api('/api/workspace').then(applyWorkspace);
+      }
+      showAuthGate();
+    })
+    .catch(function() { showAuthGate(); });
 });
 
 function goTab(id, btn) {
@@ -265,6 +705,8 @@ function addTask() {
     .then(function() { return api('/api/tasks'); })
     .then(function(data) {
       tasks = data; renderTasks();
+      resetSchedulePanel();
+      resetLogPanel();
       document.getElementById('f-name').value = '';
       document.getElementById('f-course').value = '';
       toast('Task added');
@@ -275,7 +717,11 @@ function addTask() {
 function deleteTask(id) {
   api('/api/tasks/' + id, 'DELETE')
     .then(function() { return api('/api/tasks'); })
-    .then(function(data) { tasks = data; renderTasks(); })
+    .then(function(data) {
+      tasks = data; renderTasks();
+      resetSchedulePanel();
+      resetLogPanel();
+    })
     .catch(function(e) { toast(e.message, true); });
 }
 
@@ -283,23 +729,66 @@ function clearAll() {
   if (!tasks.length) return;
   if (!confirm('Clear all tasks?')) return;
   api('/api/tasks', 'DELETE')
-    .then(function() { tasks = []; renderTasks(); })
+    .then(function() {
+      tasks = [];
+      renderTasks();
+      resetSchedulePanel();
+      resetLogPanel();
+    })
     .catch(function(e) { toast(e.message, true); });
+}
+
+function editTask(id) {
+  var t = null;
+  for (var i = 0; i < tasks.length; i++) {
+    if (tasks[i].id === id) { t = tasks[i]; break; }
+  }
+  if (!t) { toast('Task not found.', true); return; }
+  openEditModal(t);
+}
+
+function emptyTaskPlaceholder() {
+  var el = document.createElement('div');
+  el.className = 'empty';
+  el.id = 'task-empty';
+  el.innerHTML = '<div class="empty-icon">&#128221;</div>'
+    + '<p style="font-size:.84rem">No tasks yet. Add one from the sidebar.</p>';
+  return el;
 }
 
 function renderTasks() {
   var list  = document.getElementById('task-list');
-  var empty = document.getElementById('task-empty');
   document.getElementById('task-count').textContent = tasks.length;
   if (!tasks.length) {
+    var ph = document.getElementById('task-empty');
     list.innerHTML = '';
-    if (empty) { list.appendChild(empty); empty.style.display = 'block'; }
+    if (!ph) ph = emptyTaskPlaceholder();
+    list.appendChild(ph);
+    ph.style.display = 'block';
     return;
   }
-  if (empty) empty.style.display = 'none';
+  var ordered = tasks.slice().sort(function(a, b) {
+    var key = taskSortBy;
+    var av = a[key];
+    var bv = b[key];
+    var cmp = 0;
+    if (key === 'due_date') {
+      var ad = Date.parse(av || '');
+      var bd = Date.parse(bv || '');
+      ad = isNaN(ad) ? 0 : ad;
+      bd = isNaN(bd) ? 0 : bd;
+      cmp = ad - bd;
+    } else if (key === 'estimated_hours' || key === 'difficulty') {
+      cmp = Number(av || 0) - Number(bv || 0);
+    } else {
+      cmp = String(av || '').toLowerCase().localeCompare(String(bv || '').toLowerCase());
+    }
+    return taskSortOrder === 'desc' ? -cmp : cmp;
+  });
+
   var html = '';
-  for (var i = 0; i < tasks.length; i++) {
-    var t = tasks[i];
+  for (var i = 0; i < ordered.length; i++) {
+    var t = ordered[i];
     var dot = dotColor(t.difficulty);
     html += '<div class="task-card">'
       + '<div class="task-dot" style="background:' + dot + '"></div>'
@@ -310,6 +799,7 @@ function renderTasks() {
       + '<span>' + t.estimated_hours + 'h</span>'
       + (t.course ? '<span class="course-pill">' + esc(t.course) + '</span>' : '')
       + '</div></div>'
+      + '<button class="btn btn-edit" onclick="editTask(\'' + t.id + '\')" style="padding:4px 9px;font-size:.7rem">Edit</button>'
       + '<button class="btn btn-red" onclick="deleteTask(\'' + t.id + '\')" style="padding:4px 9px;font-size:.7rem">&#x2715;</button>'
       + '</div>';
   }
@@ -325,6 +815,7 @@ function generate() {
   btn.innerHTML = '<span class="spin"></span> Scheduling...';
   api('/api/schedule', 'POST', {max_hours: maxH, start_date: start})
     .then(function(res) {
+      saveConstraintDraft();
       renderSchedule(res, maxH);
       renderLog(res.log);
       goTab('schedule', document.querySelectorAll('.tab-btn')[1]);
@@ -385,11 +876,22 @@ function renderLog(lines) {
 
 function api(url, method, body) {
   method = method || 'GET';
-  var opts = {method: method, headers: {}};
+  var opts = {method: method, headers: {}, credentials: 'same-origin'};
   if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
   return fetch(url, opts).then(function(r) {
-    return r.json().then(function(j) {
-      if (!r.ok) throw new Error(j.error || 'Request failed');
+    return r.text().then(function(text) {
+      var j = null;
+      try { j = text ? JSON.parse(text) : null; } catch (ignore) {}
+      if (!r.ok) {
+        if (r.status === 401 && url.indexOf('/api/auth') === -1) {
+          loggedIn = false;
+          document.getElementById('user-row').classList.add('hidden');
+          showAuthGate();
+        }
+        var msg = (j && j.error) ? j.error : ('Request failed (' + r.status + ').');
+        throw new Error(msg);
+      }
+      if (j == null) throw new Error('Unexpected non-JSON response.');
       return j;
     });
   });
