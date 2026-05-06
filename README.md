@@ -29,8 +29,6 @@ python planner/app.py
 http://127.0.0.1:5000
 ```
 
-> Note: Use `127.0.0.1` instead of `localhost` to avoid a Chrome port-blocking issue on port 5000.
-
 ---
 
 ## Project Structure
