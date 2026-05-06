@@ -51,6 +51,7 @@ label { display: block; font-size: .72rem; color: var(--muted); margin-bottom: 4
 input[type=text], input[type=number], input[type=date] {
   width: 100%; background: var(--input-bg); border: 1px solid var(--border);
   border-radius: 8px; padding: 7px 10px; color: var(--text);
+  height: 34px;
   font-size: .8rem; font-family: 'Plus Jakarta Sans', sans-serif;
   transition: border-color .15s;
 }
@@ -58,7 +59,8 @@ input:focus { outline: none; border-color: var(--purple); }
 input::placeholder { color: var(--muted); }
 input[type=range] { width: 100%; accent-color: var(--purple); }
 .field { margin-bottom: 0; }
-.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: end; }
+.row2 .field { display: flex; flex-direction: column; justify-content: flex-end; }
 
 .btn { display: flex; align-items: center; justify-content: center; gap: 6px; border: none; border-radius: 8px; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; font-size: .8rem; padding: 9px 14px; width: 100%; transition: opacity .15s; }
 .btn:hover { opacity: .88; }
@@ -115,7 +117,9 @@ input[type=range] { width: 100%; accent-color: var(--purple); }
 .day-hrs { font-family: 'DM Mono', monospace; font-size: .7rem; color: var(--muted); }
 .day-slots { padding: 10px 14px; display: flex; flex-direction: column; gap: 7px; }
 .slot { display: flex; align-items: center; gap: 10px; }
-.slot-name { flex: 1; font-size: .8rem; color: var(--text); }
+.slot-main { flex: 1; min-width: 0; font-size: .8rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.slot-name { color: var(--text); }
+.slot-course { font-size: .72rem; color: var(--muted); margin-left: 6px; }
 .slot-bar-wrap { flex: 0 0 80px; height: 4px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
 .slot-bar { height: 100%; background: var(--purple); border-radius: 10px; opacity: .45; }
 .slot-h { font-family: 'DM Mono', monospace; font-size: .68rem; color: var(--muted); }
@@ -858,8 +862,9 @@ function renderSchedule(res, maxH) {
     for (var j = 0; j < day.slots.length; j++) {
       var s  = day.slots[j];
       var sp = Math.min(100, (s.hours / maxH) * 100);
+      var courseInline = s.course ? ('<span class="slot-course">(' + esc(s.course) + ')</span>') : '';
       slots += '<div class="slot">'
-        + '<div class="slot-name">' + esc(s.name) + '</div>'
+        + '<div class="slot-main"><span class="slot-name">' + esc(s.name) + '</span>' + courseInline + '</div>'
         + '<div class="slot-bar-wrap"><div class="slot-bar" style="width:' + sp + '%"></div></div>'
         + '<div class="slot-h">' + s.hours + 'h</div></div>';
     }

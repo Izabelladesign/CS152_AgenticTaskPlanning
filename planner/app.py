@@ -297,7 +297,10 @@ def schedule():
             "date": d.isoformat(),
             "label": d.strftime("%A, %b %d").replace(" 0", " "),
             "total": round(sum(h for _, h in slots), 2),
-            "slots": [{"name": t.name, "hours": round(h, 2)} for t, h in slots],
+            "slots": [
+                {"name": t.name, "course": t.course, "hours": round(h, 2)}
+                for t, h in slots
+            ],
         })
 
     result = {
