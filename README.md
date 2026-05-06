@@ -10,7 +10,7 @@ This is a web-based academic task planner that uses a multi-agent architecture t
 
 **1. Clone or unzip the repository**
 ```bash
-git clone <repo-url>
+git clone <https://github.com/Izabelladesign/CS152_AgenticTaskPlanning.git>
 cd CS152_AgenticTaskPlanning-main
 ```
 
