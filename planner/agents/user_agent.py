@@ -25,7 +25,11 @@ class UserAgent:
         return self.env, tasks
 
     def _build_env(self) -> Dict[str, Any]:
-        start_date = date.fromisoformat(self.settings.get("start_date", date.today().isoformat()))
+        today = date.today()
+        start_date = date.fromisoformat(self.settings.get("start_date", today.isoformat()))
+        # Prevent stale persisted settings from scheduling into already-passed days.
+        if start_date < today:
+            start_date = today
         max_hours = float(self.settings.get("max_hours", 6))
         if max_hours <= 0:
             raise ValueError("Max hours per day must be greater than 0.")
