@@ -30,8 +30,7 @@ class SchedulerAgent:
         impossible = [t for t in tasks if t.impossible]
         feasible = sorted(
             [t for t in tasks if not t.impossible],
-            key=lambda t: t.priority,
-            reverse=True,
+            key=lambda t: (t.deadline, -t.priority, -t.duration),
         )
 
         self.unscheduled.extend(impossible)
@@ -122,6 +121,7 @@ class SchedulerAgent:
         days = self._window(self.start_date, task.deadline)
         remaining = task.duration
         proposed: List[Tuple[date, float]] = []
+        # Fill from earliest day forward so work is front-loaded.
         for day in days:
             if remaining <= 0:
                 break
