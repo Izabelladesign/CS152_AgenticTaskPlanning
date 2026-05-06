@@ -374,6 +374,14 @@ var taskSortBy = 'due_date';
 var taskSortOrder = 'asc';
 var editingTaskId = null;
 
+function localTodayISO() {
+  var d = new Date();
+  var y = d.getFullYear();
+  var m = String(d.getMonth() + 1).padStart(2, '0');
+  var day = String(d.getDate()).padStart(2, '0');
+  return y + '-' + m + '-' + day;
+}
+
 function hideAuthGate() {
   document.getElementById('auth-mask').style.display = 'none';
 }
@@ -535,7 +543,14 @@ function applyWorkspace(ws) {
   if (bySel) bySel.value = taskSortBy;
   if (ordSel) ordSel.value = taskSortOrder;
   renderTasks();
-  if (st.start_date) document.getElementById('c-start').value = st.start_date;
+  var today = localTodayISO();
+  if (st.start_date) {
+    var effectiveStart = st.start_date < today ? today : st.start_date;
+    document.getElementById('c-start').value = effectiveStart;
+    if (effectiveStart !== st.start_date) saveConstraintDraft();
+  } else {
+    document.getElementById('c-start').value = today;
+  }
   if (st.max_hours_per_day != null && !isNaN(parseFloat(st.max_hours_per_day))) {
     document.getElementById('c-maxh').value = String(st.max_hours_per_day);
   }
@@ -669,7 +684,7 @@ function updatePips(val) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  var today = new Date().toISOString().split('T')[0];
+  var today = localTodayISO();
   document.getElementById('f-due').value = today;
   document.getElementById('c-start').value = today;
   wireConstraintAutosave();

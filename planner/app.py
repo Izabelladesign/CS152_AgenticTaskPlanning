@@ -312,6 +312,8 @@ def schedule():
         start_d = date.fromisoformat(str(body.get("start_date") or ws.get("settings", {}).get("start_date", date.today().isoformat())))
     except ValueError:
         start_d = date.today()
+    if start_d < date.today():
+        start_d = date.today()
 
     ws["schedule"] = result
     st = ws.setdefault("settings", {})
