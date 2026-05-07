@@ -47,4 +47,5 @@ class UserAgent:
             duration=float(task["estimated_hours"]),
             difficulty=int(task["difficulty"]),
             course=task.get("course", ""),
+            uid=str(task.get("id", "")),
         )

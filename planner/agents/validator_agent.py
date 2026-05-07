@@ -21,6 +21,7 @@ class ValidatorAgent:
 
         scheduled_hours = defaultdict(float)
         task_hours = defaultdict(float)
+        unscheduled_keys = {u.key() for u in unscheduled}
 
         for day, slots in schedule.items():
             if day < self.env["start_date"]:
@@ -37,17 +38,17 @@ class ValidatorAgent:
                     errors.append(f"Non-positive allocation for '{task.name}' on {day.isoformat()}")
                 if day > task.deadline:
                     errors.append(f"'{task.name}' scheduled after deadline on {day.isoformat()}")
-                task_hours[task.name] += hours
+                task_hours[task.key()] += hours
 
         for task in tasks:
-            allocated = task_hours[task.name]
+            allocated = task_hours[task.key()]
             if task.impossible:
-                if task.name not in {u.name for u in unscheduled}:
+                if task.key() not in unscheduled_keys:
                     warnings.append(f"Impossible task '{task.name}' should remain unscheduled")
                 continue
 
             if abs(allocated - task.duration) > 1e-9:
-                if task.name in {u.name for u in unscheduled}:
+                if task.key() in unscheduled_keys:
                     warnings.append(
                         f"'{task.name}' was left unscheduled with {allocated:.2f}/{task.duration:.2f}h allocated"
                     )

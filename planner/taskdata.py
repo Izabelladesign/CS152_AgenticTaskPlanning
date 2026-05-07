@@ -10,6 +10,7 @@ class Task:
     course:     str = ""
     priority:   float = 0.0
     impossible: bool  = False
+    uid:        str = ""
 
     def days_until(self, from_date: date) -> int:
         return (self.deadline - from_date).days
@@ -27,3 +28,12 @@ class Task:
 
     def mark_impossible(self) -> "Task":
         return replace(self, impossible=True, priority=float("-inf"))
+
+    def key(self) -> str:
+        """
+        Stable identity key for internal bookkeeping.
+        Falls back to runtime object identity if a persisted uid is unavailable.
+        """
+        if self.uid:
+            return self.uid
+        return f"anon:{id(self)}"
